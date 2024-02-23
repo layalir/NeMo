@@ -68,7 +68,7 @@ pipeline {
       steps {
          sh 'git clone https://github.com/NVIDIA/TransformerEngine.git && \
              cd TransformerEngine && \
-             git fetch origin da30634a6c9ccdbb6c587b6c93b1860e4b038204 && \
+             git fetch origin 8c9abbb80dba196f086b8b602a7cf1bce0040a6a && \
              git checkout FETCH_HEAD && \
              git submodule init && git submodule update && \
              NVTE_FRAMEWORK=pytorch NVTE_WITH_USERBUFFERS=1 MPI_HOME=/usr/local/mpi pip install .'
@@ -91,7 +91,7 @@ pipeline {
       steps {
          sh 'git clone https://github.com/NVIDIA/Megatron-LM.git && \
              cd Megatron-LM && \
-             git checkout 240a8ef7a21df201e47b5b2ae33cc5f4c5486849 && \
+             git checkout 5f9c870f9f24b482509699d206a9dbb00958f6fc && \
              pip install .'
       }
     }
@@ -113,6 +113,13 @@ pipeline {
         sh 'python -c "import nemo.collections.asr as nemo_asr"'
         sh 'python -c "import nemo.collections.nlp as nemo_nlp"'
         sh 'python -c "import nemo.collections.tts as nemo_tts"'
+      }
+    }
+    stage('Import Checks'){
+      steps {
+        sh 'python tests/core_ptl/check_imports.py --domain "asr"'
+        sh 'python tests/core_ptl/check_imports.py --domain "nlp"'
+        sh 'python tests/core_ptl/check_imports.py --domain "tts"'
       }
     }
     stage('L0: Unit Tests GPU') {
