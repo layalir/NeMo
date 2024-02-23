@@ -85,7 +85,11 @@ pipeline {
       steps {
          sh 'git clone https://github.com/NVIDIA/Megatron-LM.git && \
              cd Megatron-LM && \
+<<<<<<< HEAD
              git checkout bed60a881f4b238b1c14b6c6a64997cc636e77b6 && \
+=======
+             git checkout 5f9c870f9f24b482509699d206a9dbb00958f6fc && \
+>>>>>>> 96cee29a6 (Add mcore full TE transformer layer spec (#8328))
              pip install .'
       }
     }
@@ -107,6 +111,13 @@ pipeline {
         sh 'python -c "import nemo.collections.asr as nemo_asr"'
         sh 'python -c "import nemo.collections.nlp as nemo_nlp"'
         sh 'python -c "import nemo.collections.tts as nemo_tts"'
+      }
+    }
+    stage('Import Checks'){
+      steps {
+        sh 'python tests/core_ptl/check_imports.py --domain "asr"'
+        sh 'python tests/core_ptl/check_imports.py --domain "nlp"'
+        sh 'python tests/core_ptl/check_imports.py --domain "tts"'
       }
     }
     stage('L0: Unit Tests GPU') {
