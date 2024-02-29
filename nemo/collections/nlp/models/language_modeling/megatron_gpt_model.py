@@ -114,7 +114,6 @@ except (ImportError, ModuleNotFoundError):
     HAVE_TE = False
 
 
-@cache
 def mcore_supports_moe() -> bool:
     global HAVE_MEGATRON_CORE
     if not HAVE_MEGATRON_CORE:
