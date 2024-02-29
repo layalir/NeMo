@@ -69,7 +69,7 @@ RUN git clone https://github.com/NVIDIA/Megatron-LM.git && \
   git checkout 240a8ef7a21df201e47b5b2ae33cc5f4c5486849 && \
   pip install .
 
-# Performance optimizations for distributed optimizer: https://github.com/NVIDIA/apex/pull/1771
+# Apex bugfix for PyTorch 23.11 container: https://github.com/NVIDIA/apex/pull/1760
 RUN git clone https://github.com/NVIDIA/apex.git && \
   cd apex && \
   git checkout f058162b215791b15507bb542f22ccfde49c872d && \
