@@ -18,14 +18,12 @@ import queue
 import warnings
 from contextlib import nullcontext
 from dataclasses import fields
-from functools import cache, partial
-from importlib.metadata import version
+from functools import partial
 from typing import Any, Dict, Iterator, List, Optional, Union
 
 import torch
 from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
-from pkg_resources import packaging
 from pytorch_lightning.accelerators import CPUAccelerator
 from pytorch_lightning.trainer.trainer import Trainer
 
@@ -1000,24 +998,12 @@ class MegatronGPTModel(MegatronBaseModel, TextGeneration):
                         cu_seqlens = cu_seqlens[: cu_seqlens_argmin.item()]
                     else:
                         cu_seqlens = cu_seqlens[: torch.argmin(cu_seqlens)]
-
-                    try:
-                        from megatron.core.packed_seq_params import PackedSeqParams
-                    except (ImportError, ModuleNotFoundError) as e:
-                        mcore_version = packaging.version.Version(version('megatron-core'))
-                        logging.error(
-                            f"megatron-core v{mcore_version} does not support training with packed sequence. "
-                            "Please use megatron-core >= 0.5.0, or set model.data.train_ds.packed_sequence=False"
-                        )
-                        raise e
-
-                    forward_args['packed_seq_params'] = PackedSeqParams(
-                        cu_seqlens_q=cu_seqlens,
-                        cu_seqlens_kv=cu_seqlens,
-                        max_seqlen_q=max_seqlen,
-                        max_seqlen_kv=max_seqlen,
-                        qkv_format='thd',
-                    )
+                    forward_args['cu_seqlens_q'] = cu_seqlens
+                    forward_args['cu_seqlens_kv'] = cu_seqlens
+                    if max_seqlen is not None:
+                        forward_args['max_seqlen_q'] = max_seqlen
+                        forward_args['max_seqlen_kv'] = max_seqlen
+                    forward_args['qkv_format'] = 'thd'
 
             output_tensor = model(**forward_args)
 
